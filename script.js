@@ -48,7 +48,13 @@ function populateMonthDropdown(data) {
     option.textContent = month;
     monthFilter.appendChild(option);
   });
+
+  // Set default to latest (last) month in sorted list
+  if (sortedMonths.length > 0) {
+    monthFilter.value = sortedMonths[sortedMonths.length - 1];
+  }
 }
+
 
 function populateYearDropdown(data) {
   const yearSet = new Set();
