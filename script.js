@@ -53,7 +53,6 @@ function renderTable() {
   const container = document.getElementById("tableContainer");
   container.innerHTML = "";
 
-  // Filter data
   const filteredData = allData.filter(row => {
     const date = new Date(row["Actual Complete Date"]);
     if (selectedMonth === "All") return true;
@@ -64,7 +63,7 @@ function renderTable() {
   const grouped = {};
   filteredData.forEach(row => {
     let owner = row["Task Owner"] || "Unassigned";
-    owner = owner.replace(/<.*?>/, "").trim(); // remove email-like IDs
+    owner = owner.replace(/<.*?>/, "").trim(); // clean name
     if (!grouped[owner]) grouped[owner] = [];
     grouped[owner].push(row);
   });
@@ -80,20 +79,25 @@ function renderTable() {
     const header = document.createElement("div");
     header.className = "task-header";
 
-    const escalatedTasks = tasks.filter(row => row["Escalated Task?"]?.toLowerCase() === "yes");
-    const takenAfterEscalation = escalatedTasks.filter(row => {
-      const assign = new Date(row["Task Assignment Date"]);
-      const escalate = new Date(row["Task Escalation Time"]);
-      return !isNaN(assign) && !isNaN(escalate) && assign > escalate;
-    }).length;
+    // Count escalated and taken-after-escalation tasks
+    let escalatedCount = 0;
+    let takenAfterEscalationCount = 0;
 
-    header.innerHTML = `
-      <span class="toggle-btn">[+]</span> ${owner}
-      <span class="task-count">
-        (${tasks.length} tasks | ${escalatedTasks.length} escalated | ${takenAfterEscalation} taken after escalation)
-      </span>
-    `;
+    tasks.forEach(row => {
+      const escalated = row["Escalated Task?"]?.toLowerCase() === "yes";
+      const assignDate = row["Task Assignment Date"] ? new Date(row["Task Assignment Date"]) : null;
+      const escalationTime = row["Task Escalation Time"] ? new Date(row["Task Escalation Time"]) : null;
 
+      if (escalated) {
+        escalatedCount++;
+        if (assignDate && escalationTime && assignDate > escalationTime) {
+          takenAfterEscalationCount++;
+        }
+      }
+    });
+
+    // Set header
+    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} tasks | ${escalatedCount} escalated | ${takenAfterEscalationCount} taken after escalation)</span>`;
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
@@ -120,8 +124,18 @@ function renderTable() {
     table.appendChild(thead);
 
     const tbody = document.createElement("tbody");
+
     tasks.forEach(row => {
       const tr = document.createElement("tr");
+
+      const escalated = row["Escalated Task?"]?.toLowerCase() === "yes";
+      const assignDate = row["Task Assignment Date"] ? new Date(row["Task Assignment Date"]) : null;
+      const escalationTime = row["Task Escalation Time"] ? new Date(row["Task Escalation Time"]) : null;
+
+      if (escalated && assignDate && escalationTime && assignDate > escalationTime) {
+        tr.style.backgroundColor = "#ffe5e5"; // Light red for taken after escalation
+      }
+
       tr.innerHTML = `
         <td>${row["Service Delivery Order - Customer PON"]}</td>
         <td>${row["Task Type"]}</td>
