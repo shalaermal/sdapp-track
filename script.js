@@ -181,7 +181,7 @@ function renderTable() {
 
     const header = document.createElement("div");
     header.className = "task-header";
-    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} tasks | ${escalated} escalated | ${lateAssigned} taken after escalation)</span>`;
+    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} completed | ${escalated} escalated | ${lateAssigned} picked up after escalation)</span>`;
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
