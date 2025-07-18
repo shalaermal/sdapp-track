@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script> <!-- Add this line -->
+</head>
+<body>
+  <div class="container">
+    <h2>Task Tracker</h2>
+    <input type="file" id="csvFile" accept=".csv" />
+    <label for="monthFilter">Filter by Month:</label>
+    <select id="monthFilter"></select>
+    <div id="tableContainer"></div>
+    <div id="taskSummary"></div>
+    <div id="taskTable"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
