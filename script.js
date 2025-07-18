@@ -56,12 +56,13 @@ function renderTable() {
     return label === selectedMonth;
   });
 
-  const grouped = {};
-  filteredData.forEach(row => {
-    const owner = row["Task Owner"] || "Unassigned";
-    if (!grouped[owner]) grouped[owner] = [];
-    grouped[owner].push(row);
-  });
+const grouped = {};
+filteredData.forEach(row => {
+  let owner = row["Task Owner"] || "Unassigned";
+  owner = owner.replace(/<.*?>/, "").trim(); // ✨ Clean name
+  if (!grouped[owner]) grouped[owner] = [];
+  grouped[owner].push(row);
+});
 
   let totalTasks = 0;
 
@@ -73,12 +74,19 @@ function renderTable() {
 
     const header = document.createElement("div");
     header.className = "task-header";
-    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} tasks)</span>`;
+
+    // Count how many tasks are escalated
+    const escalatedCount = tasks.filter(row => row["Escalated Task?"]?.toLowerCase() === "yes").length;
+
+    // Set header HTML with both total and escalated tasks
+    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} tasks | ${escalatedCount} escalated)</span>`;
+
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
       header.querySelector(".toggle-btn").textContent = isVisible ? "[+]" : "[-]";
     });
+
 
     const content = document.createElement("div");
     content.className = "task-content";
@@ -90,19 +98,25 @@ function renderTable() {
     const thead = document.createElement("thead");
     thead.innerHTML = `
       <tr>
-        <th>Order Name</th>
-        <th>Task Type</th>
-        <th>Complete Date</th>
-      </tr>`;
+            <th>Order Name</th>
+            <th>Task Type</th>
+            <th>Complete Date</th>
+            <th>Escalated Task?</th>
+            <th>Task Escalation Time</th>
+            <th>Task Assignment Date</th>
+       </tr>`;
     table.appendChild(thead);
 
     const tbody = document.createElement("tbody");
     tasks.forEach(row => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${row["Service Delivery Order - Customer PON"]}</td>
-        <td>${row["Task Type"]}</td>
-        <td>${row["Actual Complete Date"]}</td>
+          <td>${row["Service Delivery Order - Customer PON"]}</td>
+          <td>${row["Task Type"]}</td>
+          <td>${row["Actual Complete Date"]}</td>
+          <td>${row["Escalated Task?"] || ""}</td>
+          <td>${row["Task Escalation Time"] || ""}</td>
+          <td>${row["Task Assignment Date"] || ""}</td>
       `;
       tbody.appendChild(tr);
     });
