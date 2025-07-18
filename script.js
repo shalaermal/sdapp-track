@@ -1,7 +1,6 @@
 const teamMembers = [
-  "Fitim Ahmeti", "Shpend Ajeti", "Robert Alan", "Festim Asllani", "Tim Corey",
-  "Vlora Ibrahimi", "Greg Jones", "Stephanie Morgan", "Vanja Petrushevski",
-  "Susan Scalese", "Edi Sermaxhaj", "Ermal Shala"
+  "Fitim Ahmeti", "Shpend Ajeti", "Festim Asllani", "Tim Corey",
+  "Vlora Ibrahimi", "Vanja Petrushevski", "Edi Sermaxhaj", "Ermal Shala"
 ];
 
 document.getElementById("csvFile").addEventListener("change", handleFile);
