@@ -1,101 +1,88 @@
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f7f9;
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
   margin: 0;
   padding: 20px;
-}
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  color: #222;
 }
 
 h2 {
   text-align: center;
-  color: #333;
+  margin-bottom: 20px;
+}
+.taken-after-escalation {
+  background-color: #ffe0e0 !important; /* light red */
+}
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 input[type="file"],
 select {
-  margin: 10px 0;
   padding: 6px;
-  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-.task-owner {
-  margin-top: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.task-group {
+  background-color: #e8f4dc;
+  border: 1px solid #d1e7c5;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .task-header {
+  padding: 10px 15px;
+  font-weight: bold;
+  background-color: #d8f0c0;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  background: #f1f1f1;
-  padding: 8px 12px;
-  margin-top: 6px;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.toggle-btn {
   cursor: pointer;
-  font-weight: bold;
-  color: #007BFF;
-}
-
-.owner-name {
-  font-weight: bold;
-  flex-grow: 1;
-}
-
-.task-stats {
-  font-size: 14px;
-  color: #444;
-}
-
-.task-stats .stat {
-  margin: 0 4px;
-}
-
-
-.task-header .toggle-btn {
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.task-header .owner-name {
-  font-weight: bold;
 }
 
 .task-header:hover {
-  background-color: #d2f1e0;
+  background-color: #cce9ae;
+}
+
+.task-count {
+  font-weight: normal;
+  font-size: 0.95em;
+  color: #333;
+}
+
+.task-content {
+  padding: 10px 15px;
 }
 
 .task-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9em;
+  font-size: 14px;
 }
 
 .task-table th,
 .task-table td {
-  padding: 6px;
-  border: 1px solid #ddd;
+  padding: 8px;
+  border: 1px solid #ccc;
   text-align: left;
 }
 
 .task-table th {
-  background-color: #f0f0f0;
+  background-color: #f2f2f2;
 }
 
-.total-row {
-  margin-top: 20px;
+.total-summary {
+  text-align: center;
+  margin-top: 15px;
   font-weight: bold;
-  text-align: right;
 }
