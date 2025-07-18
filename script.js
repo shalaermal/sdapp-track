@@ -106,7 +106,9 @@ function renderTable() {
     const yearMatch = date.getFullYear().toString() === selectedYear;
     const monthMatch = selectedMonth === "All" || monthLabel === selectedMonth;
     const cleanOwner = (row["Task Owner"] || "Unassigned").replace(/<.*?>/, "").trim();
-    const memberMatch = selectedMember === "All" || cleanOwner === selectedMember;
+    const memberMatch = selectedMember === "All"
+  ? teamMembers.includes(cleanOwner)
+  : cleanOwner === selectedMember;
     return monthMatch && yearMatch && memberMatch;
   });
 
