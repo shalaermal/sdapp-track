@@ -97,7 +97,15 @@ function renderTable() {
     });
 
     // Set header
-    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} tasks | ${escalatedCount} escalated | ${takenAfterEscalationCount} taken after escalation)</span>`;
+    header.innerHTML = `
+      <span class="toggle-btn">[+]</span>
+      <span class="owner-name">${owner}</span>
+      <span class="task-stats">
+        <span class="stat">${tasks.length} tasks</span> |
+        <span class="stat">${escalatedCount} escalated</span> |
+        <span class="stat">${takenAfterEscalationCount} taken after escalation</span>
+      </span>
+    `;
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
