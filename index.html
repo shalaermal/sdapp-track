@@ -1,14 +1,14 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SDAPP Task Tracker</title>
-  <link rel="icon" type="image/png" href="black-logo.png" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <h2>Task Tracker</h2>
+  <h2>📊 Task Tracker</h2>
   <div class="controls">
     <input type="file" id="csvFile" />
     <label>Filter by Year:</label>
@@ -18,9 +18,7 @@
     <label>Filter by Team Member:</label>
     <select id="memberFilter"></select>
   </div>
-
-  <div id="tableContainer"></div> <!-- ✅ FIXED here -->
-
+  <div id="tableContainer"></div>
   <script src="script.js"></script>
 </body>
 </html>

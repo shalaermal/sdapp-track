@@ -48,12 +48,10 @@ function populateMonthDropdown(data) {
     monthFilter.appendChild(option);
   });
 
-  // Set default to latest (last) month in sorted list
   if (sortedMonths.length > 0) {
     monthFilter.value = sortedMonths[sortedMonths.length - 1];
   }
 }
-
 
 function populateYearDropdown(data) {
   const yearSet = new Set();
@@ -107,8 +105,8 @@ function renderTable() {
     const monthMatch = selectedMonth === "All" || monthLabel === selectedMonth;
     const cleanOwner = (row["Task Owner"] || "Unassigned").replace(/<.*?>/, "").trim();
     const memberMatch = selectedMember === "All"
-  ? teamMembers.includes(cleanOwner)
-  : cleanOwner === selectedMember;
+      ? teamMembers.includes(cleanOwner)
+      : cleanOwner === selectedMember;
     return monthMatch && yearMatch && memberMatch;
   });
 
@@ -132,9 +130,40 @@ function renderTable() {
     content.className = "task-content";
     content.style.display = "none";
 
-    const table = document.createElement("table");
-    table.className = "task-table";
-    table.innerHTML = `
+    // 📊 Task Type Summary (Top Table)
+    const taskTypeCounts = {};
+    tasks.forEach(row => {
+      const type = (row["Task Type"] || "").trim();
+      if (type) {
+        taskTypeCounts[type] = (taskTypeCounts[type] || 0) + 1;
+      }
+    });
+
+    const summaryTable = document.createElement("table");
+    summaryTable.className = "task-table";
+    summaryTable.innerHTML = `
+      <thead>
+        <tr><th>Task Type</th><th>Count</th></tr>
+      </thead>
+    `;
+    const summaryBody = document.createElement("tbody");
+    for (const [type, count] of Object.entries(taskTypeCounts)) {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${type}</td><td>${count}</td>`;
+      summaryBody.appendChild(row);
+    }
+    // ➕ Add total completed row
+    const totalRow = document.createElement("tr");
+    totalRow.innerHTML = `<td><strong>Total Completed</strong></td><td><strong>${tasks.length}</strong></td>`;
+    summaryBody.appendChild(totalRow);
+
+    summaryTable.appendChild(summaryBody);
+    content.appendChild(summaryTable);
+
+    // 📋 Task Details Table (Bottom Table)
+    const detailTable = document.createElement("table");
+    detailTable.className = "task-table";
+    detailTable.innerHTML = `
       <thead>
         <tr>
           <th>Order Name</th>
@@ -178,8 +207,8 @@ function renderTable() {
       tbody.appendChild(tr);
     });
 
-    table.appendChild(tbody);
-    content.appendChild(table);
+    detailTable.appendChild(tbody);
+    content.appendChild(detailTable);
 
     const header = document.createElement("div");
     header.className = "task-header";
