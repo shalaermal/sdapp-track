@@ -99,16 +99,19 @@ select {
   text-align: left;
   padding: 4px 8px;
   border-radius: 6px 6px 0 0;
+  background-color: #fadcbd;
 }
 
 .escalation-summary td {
   padding: 4px 8px;
   font-weight: 500;
   color: #333;
+  background-color: #f7ebde
 }
 
 .escalation-summary tr:not(:last-child) td {
   border-bottom: 1px dashed #ddd;
+  background-color: #f7ebde;
 }
 
 /* Subtle red highlight for Total Completed row in first table */
