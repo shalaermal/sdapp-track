@@ -10,9 +10,7 @@ h2 {
   text-align: center;
   margin-bottom: 20px;
 }
-.taken-after-escalation {
-  background-color: #ffe0e0 !important;
-}
+
 .controls {
   display: flex;
   flex-wrap: wrap;
@@ -80,6 +78,44 @@ select {
 
 .task-table th {
   background-color: #f2f2f2;
+}
+
+/* Escalation block styled like a card */
+.escalation-summary {
+  background-color: #f9f9f9;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  width: fit-content;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.escalation-summary thead th {
+  background-color: #ffffff;
+  font-weight: bold;
+  font-size: 15px;
+  text-align: left;
+  padding: 4px 8px;
+  border-radius: 6px 6px 0 0;
+}
+
+.escalation-summary td {
+  padding: 4px 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.escalation-summary tr:not(:last-child) td {
+  border-bottom: 1px dashed #ddd;
+}
+
+/* Subtle red highlight for Total Completed row in first table */
+.highlight-total {
+  background-color: #fce5e5;  /* light red/pink tone */
+  color: #222;
+  font-weight: bold;
 }
 
 .total-summary {

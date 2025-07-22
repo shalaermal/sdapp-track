@@ -10,7 +10,6 @@ document.getElementById("memberFilter").addEventListener("change", renderTable);
 
 let allData = [];
 
-// ✅ Read CSV file
 function handleFile(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -29,7 +28,6 @@ function handleFile(event) {
   reader.readAsText(file);
 }
 
-// ✅ Month Dropdown
 function populateMonthDropdown(data) {
   const monthSet = new Set();
   data.forEach(row => {
@@ -56,7 +54,6 @@ function populateMonthDropdown(data) {
   }
 }
 
-// ✅ Year Dropdown
 function populateYearDropdown(data) {
   const yearSet = new Set();
   data.forEach(row => {
@@ -83,7 +80,6 @@ function populateYearDropdown(data) {
   }
 }
 
-// ✅ Team Member Dropdown
 function populateMemberDropdown() {
   const memberFilter = document.getElementById("memberFilter");
   memberFilter.innerHTML = '<option value="All">Show All</option>';
@@ -96,7 +92,6 @@ function populateMemberDropdown() {
   });
 }
 
-// ✅ Render Filtered Data
 function renderTable() {
   const selectedMonth = document.getElementById("monthFilter").value;
   const selectedYear = document.getElementById("yearFilter").value;
@@ -138,7 +133,7 @@ function renderTable() {
     content.className = "task-content";
     content.style.display = "none";
 
-    // 📊 Task Type Summary Table
+    // 📊 Task Type Summary (No Total Row)
     const taskTypeCounts = {};
     tasks.forEach(row => {
       const type = (row["Task Type"] || "").trim();
@@ -151,18 +146,24 @@ function renderTable() {
     summaryTable.className = "task-table";
     summaryTable.innerHTML = `<thead><tr><th>Task Type</th><th>Count</th></tr></thead>`;
     const summaryBody = document.createElement("tbody");
+
     for (const [type, count] of Object.entries(taskTypeCounts)) {
       const row = document.createElement("tr");
       row.innerHTML = `<td>${type}</td><td>${count}</td>`;
       summaryBody.appendChild(row);
     }
+
+    // ✅ Add this total row to the top summary
     const totalRow = document.createElement("tr");
+    totalRow.className = "highlight-total";
     totalRow.innerHTML = `<td><strong>Total Completed</strong></td><td><strong>${tasks.length}</strong></td>`;
     summaryBody.appendChild(totalRow);
+
     summaryTable.appendChild(summaryBody);
     content.appendChild(summaryTable);
 
-    // 🔺 Escalation Summary Table
+
+    // 🔺 Escalation Summary Table (Styled like Excel)
     let escalated = 0;
     let pickedAfterEscalation = 0;
 
@@ -183,9 +184,9 @@ function renderTable() {
       <tbody>
         <tr><td>Picked up after escalation</td><td>${pickedAfterEscalation}</td></tr>
         <tr><td>Total escalation completed</td><td>${escalated}</td></tr>
-        <tr><td><strong>Total Completed</strong></td><td><strong>${tasks.length}</strong></td></tr>
       </tbody>
     `;
+
     content.appendChild(escalationTable);
 
     // 📋 Task Detail Table
@@ -243,7 +244,7 @@ function renderTable() {
     container.appendChild(section);
   });
 
-  // ✅ Total Summary Footer
+  // Footer Summary
   const totalDiv = document.createElement("div");
   totalDiv.className = "total-summary";
   totalDiv.textContent = `Total Tasks: ${totalTasks}`;
