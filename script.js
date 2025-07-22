@@ -10,6 +10,7 @@ document.getElementById("memberFilter").addEventListener("change", renderTable);
 
 let allData = [];
 
+// ✅ Read CSV file
 function handleFile(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -28,6 +29,7 @@ function handleFile(event) {
   reader.readAsText(file);
 }
 
+// ✅ Month Dropdown
 function populateMonthDropdown(data) {
   const monthSet = new Set();
   data.forEach(row => {
@@ -40,7 +42,8 @@ function populateMonthDropdown(data) {
 
   const sortedMonths = Array.from(monthSet).sort((a, b) => new Date(a) - new Date(b));
   const monthFilter = document.getElementById("monthFilter");
-  monthFilter.innerHTML = `<option value="All">All Months</option>`;
+  monthFilter.innerHTML = '<option value="All">All Months</option>';
+
   sortedMonths.forEach(month => {
     const option = document.createElement("option");
     option.value = month;
@@ -53,6 +56,7 @@ function populateMonthDropdown(data) {
   }
 }
 
+// ✅ Year Dropdown
 function populateYearDropdown(data) {
   const yearSet = new Set();
   data.forEach(row => {
@@ -64,7 +68,8 @@ function populateYearDropdown(data) {
 
   const sortedYears = Array.from(yearSet).sort((a, b) => b - a);
   const yearFilter = document.getElementById("yearFilter");
-  yearFilter.innerHTML = "";
+  yearFilter.innerHTML = '<option value="">Select Year</option>';
+
   sortedYears.forEach(year => {
     const option = document.createElement("option");
     option.value = year;
@@ -78,9 +83,11 @@ function populateYearDropdown(data) {
   }
 }
 
+// ✅ Team Member Dropdown
 function populateMemberDropdown() {
   const memberFilter = document.getElementById("memberFilter");
-  memberFilter.innerHTML = `<option value="All">Show All</option>`;
+  memberFilter.innerHTML = '<option value="All">Show All</option>';
+
   teamMembers.forEach(name => {
     const option = document.createElement("option");
     option.value = name;
@@ -89,6 +96,7 @@ function populateMemberDropdown() {
   });
 }
 
+// ✅ Render Filtered Data
 function renderTable() {
   const selectedMonth = document.getElementById("monthFilter").value;
   const selectedYear = document.getElementById("yearFilter").value;
@@ -130,7 +138,7 @@ function renderTable() {
     content.className = "task-content";
     content.style.display = "none";
 
-    // 📊 Task Type Summary (Top Table)
+    // 📊 Task Type Summary Table
     const taskTypeCounts = {};
     tasks.forEach(row => {
       const type = (row["Task Type"] || "").trim();
@@ -141,26 +149,46 @@ function renderTable() {
 
     const summaryTable = document.createElement("table");
     summaryTable.className = "task-table";
-    summaryTable.innerHTML = `
-      <thead>
-        <tr><th>Task Type</th><th>Count</th></tr>
-      </thead>
-    `;
+    summaryTable.innerHTML = `<thead><tr><th>Task Type</th><th>Count</th></tr></thead>`;
     const summaryBody = document.createElement("tbody");
     for (const [type, count] of Object.entries(taskTypeCounts)) {
       const row = document.createElement("tr");
       row.innerHTML = `<td>${type}</td><td>${count}</td>`;
       summaryBody.appendChild(row);
     }
-    // ➕ Add total completed row
     const totalRow = document.createElement("tr");
     totalRow.innerHTML = `<td><strong>Total Completed</strong></td><td><strong>${tasks.length}</strong></td>`;
     summaryBody.appendChild(totalRow);
-
     summaryTable.appendChild(summaryBody);
     content.appendChild(summaryTable);
 
-    // 📋 Task Details Table (Bottom Table)
+    // 🔺 Escalation Summary Table
+    let escalated = 0;
+    let pickedAfterEscalation = 0;
+
+    tasks.forEach(row => {
+      const isEscalated = row["Escalated Task?"]?.toLowerCase() === "yes";
+      if (isEscalated) {
+        escalated++;
+        const escalationDate = new Date(row["Task Escalation Time"]);
+        const assignmentDate = new Date(row["Task Assignment Date"]);
+        if (assignmentDate > escalationDate) pickedAfterEscalation++;
+      }
+    });
+
+    const escalationTable = document.createElement("table");
+    escalationTable.className = "task-table escalation-summary";
+    escalationTable.innerHTML = `
+      <thead><tr><th colspan="2">Escalation Orders</th></tr></thead>
+      <tbody>
+        <tr><td>Picked up after escalation</td><td>${pickedAfterEscalation}</td></tr>
+        <tr><td>Total escalation completed</td><td>${escalated}</td></tr>
+        <tr><td><strong>Total Completed</strong></td><td><strong>${tasks.length}</strong></td></tr>
+      </tbody>
+    `;
+    content.appendChild(escalationTable);
+
+    // 📋 Task Detail Table
     const detailTable = document.createElement("table");
     detailTable.className = "task-table";
     detailTable.innerHTML = `
@@ -177,21 +205,11 @@ function renderTable() {
     `;
 
     const tbody = document.createElement("tbody");
-    let escalated = 0;
-    let lateAssigned = 0;
-
     tasks.forEach(row => {
       const isEscalated = row["Escalated Task?"]?.toLowerCase() === "yes";
-      let isLate = false;
-
-      if (isEscalated) {
-        escalated++;
-        const escalationDate = new Date(row["Task Escalation Time"]);
-        const assignmentDate = new Date(row["Task Assignment Date"]);
-        if (assignmentDate > escalationDate) isLate = true;
-      }
-
-      if (isLate) lateAssigned++;
+      const escalationDate = new Date(row["Task Escalation Time"]);
+      const assignmentDate = new Date(row["Task Assignment Date"]);
+      const isLate = isEscalated && assignmentDate > escalationDate;
 
       const tr = document.createElement("tr");
       if (isLate) tr.classList.add("taken-after-escalation");
@@ -210,9 +228,10 @@ function renderTable() {
     detailTable.appendChild(tbody);
     content.appendChild(detailTable);
 
+    // ⬇️ Collapsible Header
     const header = document.createElement("div");
     header.className = "task-header";
-    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} completed | ${escalated} escalated | ${lateAssigned} picked up after escalation)</span>`;
+    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} completed | ${escalated} escalated | ${pickedAfterEscalation} picked up after escalation)</span>`;
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
@@ -224,6 +243,7 @@ function renderTable() {
     container.appendChild(section);
   });
 
+  // ✅ Total Summary Footer
   const totalDiv = document.createElement("div");
   totalDiv.className = "total-summary";
   totalDiv.textContent = `Total Tasks: ${totalTasks}`;
