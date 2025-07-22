@@ -4,8 +4,15 @@ const teamMembers = [
 ];
 
 document.getElementById("csvFile").addEventListener("change", handleFile);
-document.getElementById("monthFilter").addEventListener("change", renderTable);
-document.getElementById("yearFilter").addEventListener("change", renderTable);
+document.getElementById("monthFilter").addEventListener("change", () => {
+  populateDayDropdown(allData, getSelectedYear(), getSelectedMonth());
+  renderTable();
+});
+document.getElementById("yearFilter").addEventListener("change", () => {
+  populateDayDropdown(allData, getSelectedYear(), getSelectedMonth());
+  renderTable();
+});
+document.getElementById("dayFilter").addEventListener("change", renderTable);
 document.getElementById("memberFilter").addEventListener("change", renderTable);
 
 let allData = [];
@@ -20,38 +27,21 @@ function handleFile(event) {
     const rows = Papa.parse(text, { header: true }).data;
 
     allData = rows.filter(row => row["Actual Complete Date"] && row["Task Owner"]);
-    populateMonthDropdown(allData);
     populateYearDropdown(allData);
+    populateMonthDropdown(allData);
     populateMemberDropdown();
+    populateDayDropdown(allData, getSelectedYear(), getSelectedMonth());
     renderTable();
   };
   reader.readAsText(file);
 }
 
-function populateMonthDropdown(data) {
-  const monthSet = new Set();
-  data.forEach(row => {
-    const date = new Date(row["Actual Complete Date"]);
-    if (!isNaN(date)) {
-      const label = date.toLocaleString("default", { month: "long", year: "numeric" });
-      monthSet.add(label);
-    }
-  });
+function getSelectedYear() {
+  return document.getElementById("yearFilter").value;
+}
 
-  const sortedMonths = Array.from(monthSet).sort((a, b) => new Date(a) - new Date(b));
-  const monthFilter = document.getElementById("monthFilter");
-  monthFilter.innerHTML = '<option value="All">All Months</option>';
-
-  sortedMonths.forEach(month => {
-    const option = document.createElement("option");
-    option.value = month;
-    option.textContent = month;
-    monthFilter.appendChild(option);
-  });
-
-  if (sortedMonths.length > 0) {
-    monthFilter.value = sortedMonths[sortedMonths.length - 1];
-  }
+function getSelectedMonth() {
+  return document.getElementById("monthFilter").value;
 }
 
 function populateYearDropdown(data) {
@@ -80,6 +70,60 @@ function populateYearDropdown(data) {
   }
 }
 
+function populateMonthDropdown(data) {
+  const monthSet = new Set();
+  data.forEach(row => {
+    const date = new Date(row["Actual Complete Date"]);
+    if (!isNaN(date)) {
+      const label = date.toLocaleString("default", { month: "long", year: "numeric" });
+      monthSet.add(label);
+    }
+  });
+
+  const sortedMonths = Array.from(monthSet).sort((a, b) => new Date(a) - new Date(b));
+  const monthFilter = document.getElementById("monthFilter");
+  monthFilter.innerHTML = '<option value="All">All Months</option>';
+
+  sortedMonths.forEach(month => {
+    const option = document.createElement("option");
+    option.value = month;
+    option.textContent = month;
+    monthFilter.appendChild(option);
+  });
+
+  if (sortedMonths.length > 0) {
+    monthFilter.value = sortedMonths[sortedMonths.length - 1];
+  }
+}
+
+function populateDayDropdown(data, selectedYear, selectedMonth) {
+  const daySet = new Set();
+  data.forEach(row => {
+    const date = new Date(row["Actual Complete Date"]);
+    if (!isNaN(date)) {
+      const rowYear = date.getFullYear().toString();
+      const rowMonthLabel = date.toLocaleString("default", { month: "long", year: "numeric" });
+      if (rowYear === selectedYear && rowMonthLabel === selectedMonth) {
+        const day = date.getDate().toString().padStart(2, '0');
+        daySet.add(day);
+      }
+    }
+  });
+
+  const sortedDays = Array.from(daySet).sort((a, b) => parseInt(a) - parseInt(b));
+  const dayFilter = document.getElementById("dayFilter");
+  dayFilter.innerHTML = '<option value="All">All Days</option>';
+
+  sortedDays.forEach(day => {
+    const option = document.createElement("option");
+    option.value = day;
+    option.textContent = day;
+    dayFilter.appendChild(option);
+  });
+
+  dayFilter.value = "All";
+}
+
 function populateMemberDropdown() {
   const memberFilter = document.getElementById("memberFilter");
   memberFilter.innerHTML = '<option value="All">Show All</option>';
@@ -93,8 +137,9 @@ function populateMemberDropdown() {
 }
 
 function renderTable() {
-  const selectedMonth = document.getElementById("monthFilter").value;
-  const selectedYear = document.getElementById("yearFilter").value;
+  const selectedMonth = getSelectedMonth();
+  const selectedYear = getSelectedYear();
+  const selectedDay = document.getElementById("dayFilter").value;
   const selectedMember = document.getElementById("memberFilter").value;
   const container = document.getElementById("tableContainer");
   container.innerHTML = "";
@@ -106,11 +151,12 @@ function renderTable() {
     const monthLabel = date.toLocaleString("default", { month: "long", year: "numeric" });
     const yearMatch = date.getFullYear().toString() === selectedYear;
     const monthMatch = selectedMonth === "All" || monthLabel === selectedMonth;
+    const dayMatch = selectedDay === "All" || date.getDate().toString().padStart(2, '0') === selectedDay;
     const cleanOwner = (row["Task Owner"] || "Unassigned").replace(/<.*?>/, "").trim();
     const memberMatch = selectedMember === "All"
       ? teamMembers.includes(cleanOwner)
       : cleanOwner === selectedMember;
-    return monthMatch && yearMatch && memberMatch;
+    return monthMatch && yearMatch && dayMatch && memberMatch;
   });
 
   const grouped = {};
@@ -133,7 +179,6 @@ function renderTable() {
     content.className = "task-content";
     content.style.display = "none";
 
-    // 📊 Task Type Summary (No Total Row)
     const taskTypeCounts = {};
     tasks.forEach(row => {
       const type = (row["Task Type"] || "").trim();
@@ -153,7 +198,6 @@ function renderTable() {
       summaryBody.appendChild(row);
     }
 
-    // ✅ Add this total row to the top summary
     const totalRow = document.createElement("tr");
     totalRow.className = "highlight-total";
     totalRow.innerHTML = `<td><strong>Total Completed</strong></td><td><strong>${tasks.length}</strong></td>`;
@@ -162,8 +206,6 @@ function renderTable() {
     summaryTable.appendChild(summaryBody);
     content.appendChild(summaryTable);
 
-
-    // 🔺 Escalation Summary Table (Styled like Excel)
     let escalated = 0;
     let pickedAfterEscalation = 0;
 
@@ -186,10 +228,11 @@ function renderTable() {
         <tr><td>Total escalation completed</td><td>${escalated}</td></tr>
       </tbody>
     `;
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "inline-block";
+    wrapper.appendChild(escalationTable);
+    content.appendChild(wrapper);
 
-    content.appendChild(escalationTable);
-
-    // 📋 Task Detail Table
     const detailTable = document.createElement("table");
     detailTable.className = "task-table";
     detailTable.innerHTML = `
@@ -229,7 +272,6 @@ function renderTable() {
     detailTable.appendChild(tbody);
     content.appendChild(detailTable);
 
-    // ⬇️ Collapsible Header
     const header = document.createElement("div");
     header.className = "task-header";
     header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} completed | ${escalated} escalated | ${pickedAfterEscalation} picked up after escalation)</span>`;
@@ -244,7 +286,6 @@ function renderTable() {
     container.appendChild(section);
   });
 
-  // Footer Summary
   const totalDiv = document.createElement("div");
   totalDiv.className = "total-summary";
   totalDiv.textContent = `Total Tasks: ${totalTasks}`;
