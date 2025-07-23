@@ -302,7 +302,7 @@ function renderTable() {
 
     const header = document.createElement("div");
     header.className = "task-header";
-    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} Completed | ${escalated} Escalated | ${pickedAfterEscalation} Picked unassigned escalation)</span>`;
+    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${pickedAfterEscalation} Picked unassigned escalation | ${escalated} Tot Escalated | ${tasks.length} Tot Completed)</span>`;
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
