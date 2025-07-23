@@ -80,14 +80,13 @@ select {
 
 .task-table {
   width: 100%;
-  border-collapse: collapse;
   font-size: 14px;
   margin-bottom: 20px;
 }
 
 .task-table th,
 .task-table td {
-  padding: 8px;
+  padding: 5px;
   border: 1px solid #ccc;
   text-align: left;
 }
@@ -127,6 +126,7 @@ select {
   min-width: 280px;
   margin: 0;
   margin-bottom: 10px; /* 👈 Adds space below just the table */
+  font-weight: bold;
 }
 
 .task-table.day-summary th,
@@ -134,7 +134,6 @@ select {
   padding: 3px 6px;
   text-align: center;
   border: 1px solid #ccc;
-  background-color: #f6fff6;
 }
 
 .task-table.day-summary th {
@@ -145,11 +144,11 @@ select {
   padding: 4px 8px;
   border-radius: 6px 6px 0 0;
   color: #222;
+
 }
 
 /* ESCALATION SUMMARY BOX */
 .escalation-summary {
-  background-color: #f9f9f9;
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   padding: 10px 14px;
@@ -174,22 +173,19 @@ select {
   padding: 4px 8px;
   font-weight: 500;
   color: #333;
-  background-color: #f7ebde;
+  font-weight: bold;
 }
 
 .escalation-summary tr:not(:last-child) td {
   border-bottom: 1px dashed #ddd;
-  background-color: #f7ebde;
 }
 
 /* TABLE STYLE FIXES */
 .task-table.escalation-summary {
-  font-size: 12px;
   line-height: 1.2;
   border-collapse: collapse;
-  background-color: #fff3e6;
-  width: 200px;
   margin: 0;
   height: 100%;
   align-self: flex-start;
+
 }

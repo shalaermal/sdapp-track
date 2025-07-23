@@ -241,7 +241,7 @@ function renderTable() {
     const dayTable = document.createElement("table");
     dayTable.className = "task-table day-summary";
     dayTable.style.maxHeight = "220px";
-    dayTable.innerHTML = `<thead><tr><th>Date</th><th>Completed Tasks</th><th>Limit</th></tr></thead>`;
+    dayTable.innerHTML = `<thead><tr><th>Date</th><th>Completed Tasks per Day</th><th>Limit > 6 per day</th></tr></thead>`;
     const dayBody = document.createElement("tbody");
 
     Object.entries(perDaySummary).sort().forEach(([date, count]) => {
