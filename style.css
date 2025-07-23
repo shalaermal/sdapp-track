@@ -13,11 +13,27 @@ h2 {
 
 .controls {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
+  margin-bottom: 20px;
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 input[type="file"],
@@ -80,43 +96,9 @@ select {
   background-color: #f2f2f2;
 }
 
-/* Escalation block styled like a card */
-.escalation-summary {
-  background-color: #f9f9f9;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-  padding: 10px 14px;
-  margin-top: 12px;
-  width: fit-content;
-  font-size: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.escalation-summary thead th {
-  background-color: #ffffff;
-  font-weight: bold;
-  font-size: 15px;
-  text-align: left;
-  padding: 4px 8px;
-  border-radius: 6px 6px 0 0;
-  background-color: #fadcbd;
-}
-
-.escalation-summary td {
-  padding: 4px 8px;
-  font-weight: 500;
-  color: #333;
-  background-color: #f7ebde
-}
-
-.escalation-summary tr:not(:last-child) td {
-  border-bottom: 1px dashed #ddd;
-  background-color: #f7ebde;
-}
-
 /* Subtle red highlight for Total Completed row in first table */
 .highlight-total {
-  background-color: #fce5e5;  /* light red/pink tone */
+  background-color: #fce5e5;
   color: #222;
   font-weight: bold;
 }
@@ -126,26 +108,88 @@ select {
   margin-top: 15px;
   font-weight: bold;
 }
-.controls {
+
+/* ROW WRAPPER */
+.row-wrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
+  justify-content: flex-start;
+  align-items: flex-start;  /* Align both items to the top */
+  gap: 12px;
+  margin-bottom: 15px; /* 👈 Adds space below the whole row */
 }
 
-.control-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 10px;
+/* PER-DAY COMPLETION TABLE */
+.task-table.day-summary {
+  font-size: 12px;
+  line-height: 1.1;
+  border-collapse: collapse;
+  width: auto;
+  min-width: 280px;
+  margin: 0;
+  margin-bottom: 10px; /* 👈 Adds space below just the table */
 }
-.filters-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;  /* 👈 Center horizontally */
-  align-items: center;      /* 👈 Align items vertically */
-  margin-bottom: 10px;
+
+.task-table.day-summary th,
+.task-table.day-summary td {
+  padding: 3px 6px;
   text-align: center;
+  border: 1px solid #ccc;
+  background-color: #f6fff6;
+}
+
+.task-table.day-summary th {
+  background-color: #fadcbd;       /* Match Escalation Orders header */
+  font-weight: bold;
+  font-size: 15px;
+  text-align: left;
+  padding: 4px 8px;
+  border-radius: 6px 6px 0 0;
+  color: #222;
+}
+
+/* ESCALATION SUMMARY BOX */
+.escalation-summary {
+  background-color: #f9f9f9;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  padding: 10px 14px;
+  width: fit-content;
+  font-size: 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  align-self: flex-start; /* Make sure it aligns to the top */
+  margin: 0;
+}
+
+.escalation-summary thead th {
+  background-color: #fadcbd;
+  font-weight: bold;
+  font-size: 15px;
+  text-align: left;
+  padding: 4px 8px;
+  border-radius: 6px 6px 0 0;
+}
+
+.escalation-summary td {
+  padding: 4px 8px;
+  font-weight: 500;
+  color: #333;
+  background-color: #f7ebde;
+}
+
+.escalation-summary tr:not(:last-child) td {
+  border-bottom: 1px dashed #ddd;
+  background-color: #f7ebde;
+}
+
+/* TABLE STYLE FIXES */
+.task-table.escalation-summary {
+  font-size: 12px;
+  line-height: 1.2;
+  border-collapse: collapse;
+  background-color: #fff3e6;
+  width: 200px;
+  margin: 0;
+  height: 100%;
+  align-self: flex-start;
 }

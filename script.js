@@ -221,17 +221,45 @@ function renderTable() {
 
     const escalationTable = document.createElement("table");
     escalationTable.className = "task-table escalation-summary";
+    escalationTable.style.height = "auto";
+    escalationTable.style.maxHeight = "90px";
     escalationTable.innerHTML = `
       <thead><tr><th colspan="2">Escalation Orders</th></tr></thead>
       <tbody>
-        <tr><td>Picked up after escalation</td><td>${pickedAfterEscalation}</td></tr>
+        <tr><td>Picked unassigned escalation</td><td>${pickedAfterEscalation}</td></tr>
         <tr><td>Total escalation completed</td><td>${escalated}</td></tr>
       </tbody>
     `;
-    const wrapper = document.createElement("div");
-    wrapper.style.display = "inline-block";
-    wrapper.appendChild(escalationTable);
-    content.appendChild(wrapper);
+
+    const perDaySummary = {};
+    tasks.forEach(row => {
+      const date = new Date(row["Actual Complete Date"]);
+      const dateKey = date.toISOString().split("T")[0];
+      perDaySummary[dateKey] = (perDaySummary[dateKey] || 0) + 1;
+    });
+
+    const dayTable = document.createElement("table");
+    dayTable.className = "task-table day-summary";
+    dayTable.style.maxHeight = "220px";
+    dayTable.innerHTML = `<thead><tr><th>Date</th><th>Completed Tasks</th><th>Limit</th></tr></thead>`;
+    const dayBody = document.createElement("tbody");
+
+    Object.entries(perDaySummary).sort().forEach(([date, count]) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${date}</td><td>${count}</td><td>${count > 6 ? "Yes" : "No"}</td>`;
+      dayBody.appendChild(row);
+    });
+
+    dayTable.appendChild(dayBody);
+
+    const rowWrapper = document.createElement("div");
+    rowWrapper.className = "row-wrapper";
+
+    rowWrapper.appendChild(dayTable);          // Left side: Per-day Completion
+    rowWrapper.appendChild(escalationTable);   // Right side: Escalation Orders
+
+    content.appendChild(rowWrapper);
+
 
     const detailTable = document.createElement("table");
     detailTable.className = "task-table";
@@ -274,7 +302,7 @@ function renderTable() {
 
     const header = document.createElement("div");
     header.className = "task-header";
-    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} completed | ${escalated} escalated | ${pickedAfterEscalation} picked up after escalation)</span>`;
+    header.innerHTML = `<span class="toggle-btn">[+]</span> ${owner} <span class="task-count">(${tasks.length} Completed | ${escalated} Escalated | ${pickedAfterEscalation} Picked unassigned escalation)</span>`;
     header.addEventListener("click", () => {
       const isVisible = content.style.display === "block";
       content.style.display = isVisible ? "none" : "block";
